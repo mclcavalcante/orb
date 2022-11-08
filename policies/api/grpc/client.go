@@ -35,7 +35,7 @@ func (client grpcClient) RetrieveDatasetsByPolicy(ctx context.Context, in *pb.Da
 	ctx, cancel := context.WithTimeout(ctx, client.timeout)
 	defer cancel()
 
-	ar := accessByPolicyReq{
+	ar := accessDatasetsByPolicyReq{
 		PolicyName: in.PolicyName,
 		OwnerID:    in.OwnerID,
 	}
@@ -164,6 +164,14 @@ func NewClient(tracer opentracing.Tracer, conn *grpc.ClientConn, timeout time.Du
 			decodeDatasetResponse,
 			pb.DatasetRes{},
 		).Endpoint()),
+		retrieveDatasetsByPolicy: kitot.TraceClient(tracer, "retrieve_datasets_by_policy")(kitgrpc.NewClient(
+			conn,
+			svcName,
+			"RetrieveDatasetsByPolicy",
+			encodeRetrieveDatasetsByPolicyRequest,
+			decodeDatasetResponse,
+			pb.DatasetRes{},
+		).Endpoint()),
 	}
 }
 
@@ -184,6 +192,12 @@ func encodeRetrieveDatasetRequest(_ context.Context, grpcReq interface{}) (inter
 		OwnerID:   req.ownerID,
 	}, nil
 }
+
+func encodeRetrieveDatasetsByPolicyRequest(_ context.Context, grpcReq interface{}) (interface{}, error) {
+	req := grpcReq.(accessDatasetsByPolicyReq)
+	return &pb.DatasetsByPolicyReq{PolicyName: req.PolicyName, OwnerID: req.OwnerID}, nil
+}
+
 func decodePolicyResponse(_ context.Context, grpcRes interface{}) (interface{}, error) {
 	res := grpcRes.(*pb.PolicyRes)
 	return policyRes{id: res.GetId(), name: res.GetName(), data: res.GetData(), version: res.GetVersion(), backend: res.GetBackend()}, nil

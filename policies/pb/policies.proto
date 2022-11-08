@@ -8,7 +8,7 @@ service PolicyService {
   rpc RetrievePoliciesByGroups(PoliciesByGroupsReq) returns (PolicyInDSListRes) {}
   rpc RetrieveDataset(DatasetByIDReq) returns (DatasetRes) {}
   rpc RetrieveDatasetsByGroups(DatasetsByGroupsReq) returns (DatasetsRes) {}
-  rpc RetrieveDatasetsByPolicy(DatasetsByPolicyReq) returns (DatasetsRes) {}
+  rpc RetrieveDatasetsByPolicyName(DatasetsByPolicyReq) returns (DatasetsRes) {}
 }
 
 message PolicyByIDReq {

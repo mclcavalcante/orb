@@ -662,6 +662,57 @@ func (r policiesRepository) DeleteAgentGroupFromAllDatasets(ctx context.Context,
 	return nil
 }
 
+func (r policiesRepository) RetrieveDatasetsByPolicyName(ctx context.Context, policyName string, ownerID string) ([]policies.Dataset, error) {
+	q := `
+		SELECT
+			ds.id,
+			ds.name,
+			ds.mf_owner_id,
+            ds.agent_policy_id,
+            ds.agent_group_id,
+			ds.sink_ids
+		FROM datasets AS ds
+			LEFT JOIN agent_policies AS ap
+				ON ap.id = ds.agent_policy_id
+				AND ap.mf_owner_id = ds.mf_owner_id
+		WHERE ap.name = :policyName AND ap.mf_owner_id = :ownerID
+			GROUP BY ds.id,
+				ds.name,
+				ds.mf_owner_id,
+				ds.agent_policy_id,
+				ds.agent_group_id,
+				ds.sink_ids;
+`
+
+	if policyName == "" || ownerID == "" {
+		return []policies.Dataset{}, errors.ErrMalformedEntity
+	}
+
+	params := map[string]interface{}{
+		"policyName": policyName,
+		"ownerID":    ownerID,
+	}
+
+	rows, err := r.db.NamedQueryContext(ctx, q, params)
+	if err != nil {
+		return []policies.Dataset{}, errors.Wrap(errors.ErrSelectEntity, err)
+	}
+	defer rows.Close()
+
+	var items []policies.Dataset
+	for rows.Next() {
+		dbth := dbDataset{MFOwnerID: ownerID}
+		if err := rows.StructScan(&dbth); err != nil {
+			return nil, errors.Wrap(errors.ErrSelectEntity, err)
+		}
+
+		th := toDataset(dbth)
+		items = append(items, th)
+	}
+
+	return items, nil
+}
+
 func (r policiesRepository) DeleteAllDatasetsPolicy(ctx context.Context, policyID string, ownerID string) error {
 	q := `DELETE FROM datasets WHERE mf_owner_id = :mf_owner_id AND agent_policy_id = :agent_policy_id`
 

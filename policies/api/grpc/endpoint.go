@@ -119,7 +119,7 @@ func retrieveDatasetsByGroupsEndpoint(svc policies.Service) endpoint.Endpoint {
 
 func retrieveDatasetsByPolicyEndpoint(svc policies.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(accessByPolicyReq)
+		req := request.(accessDatasetsByPolicyReq)
 		if err := req.validate(); err != nil {
 			return nil, err
 		}

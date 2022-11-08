@@ -36,6 +36,10 @@ type eventStore struct {
 	logger *zap.Logger
 }
 
+func (e eventStore) ListDatasetsByPolicyName(ctx context.Context, policyName string, ownerID string) ([]policies.Dataset, error) {
+	return e.svc.ListDatasetsByPolicyName(ctx, policyName, ownerID)
+}
+
 func (e eventStore) ListDatasetsByGroupIDInternal(ctx context.Context, groupIDs []string, ownerID string) ([]policies.Dataset, error) {
 	return e.svc.ListDatasetsByGroupIDInternal(ctx, groupIDs, ownerID)
 }

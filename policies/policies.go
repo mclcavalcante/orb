@@ -124,9 +124,6 @@ type Service interface {
 
 	// ListDatasetsByGroupIDInternal gRPC version of retrieving list of datasets belonging to specified agent group with no token
 	ListDatasetsByGroupIDInternal(ctx context.Context, groupIDs []string, ownerID string) ([]Dataset, error)
-
-	// ListDatasetsByPolicyName gRPC version of retrieving list pf datasets belonging to specified policy
-	ListDatasetsByPolicyName(ctx context.Context, policyName string, ownerID string) ([]Dataset, error)
 }
 
 type Repository interface {
@@ -192,6 +189,6 @@ type Repository interface {
 	// RetrieveDatasetsByGroupID Retrieve dataset list by group id
 	RetrieveDatasetsByGroupID(ctx context.Context, groupIDs []string, ownerID string) ([]Dataset, error)
 
-	// RetrievePolicyByName Retrieve policy by name
-	RetrievePolicyByName(ctx context.Context, policyName string, ownerID string) (Policy, error)
+	// RetrieveDatasetsByPolicy Retrieve policy by name
+	RetrieveDatasetsByPolicyName(ctx context.Context, policyName string, ownerID string) ([]Dataset, error)
 }

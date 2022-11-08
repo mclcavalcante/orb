@@ -21,6 +21,18 @@ type mockPoliciesRepository struct {
 	gdb            map[string][]policies.PolicyInDataset
 }
 
+func (m *mockPoliciesRepository) RetrieveDatasetByPolicyName(ctx context.Context, policyName string, ownerID string) ([]policies.Dataset, error) {
+	for _, ds := range m.ddb {
+		if ds.MFOwnerID == ownerID {
+			if ds.Name.String() == policyName {
+				return p, nil
+			}
+		}
+	}
+
+	return policies.Policy{}, nil
+}
+
 func (m *mockPoliciesRepository) RetrieveDatasetsByGroupID(ctx context.Context, groupIDs []string, ownerID string) ([]policies.Dataset, error) {
 	var datasetList []policies.Dataset
 	for _, d := range m.ddb {

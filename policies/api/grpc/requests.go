@@ -48,15 +48,14 @@ func (req accessDatasetByIDReq) validate() error {
 	return nil
 }
 
-type accessByPolicyReq struct {
+type accessDatasetsByPolicyReq struct {
 	PolicyName string
-	OwnerID    string
+	OwnerID   string
 }
 
-func (req accessByPolicyReq) validate() error {
+func (req accessDatasetsByPolicyReq) validate() error {
 	if req.PolicyName == "" || req.OwnerID == "" {
 		return policies.ErrMalformedEntity
 	}
-
 	return nil
 }

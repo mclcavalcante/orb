@@ -22,7 +22,7 @@ type PolicyServiceClient interface {
 	RetrievePoliciesByGroups(ctx context.Context, in *PoliciesByGroupsReq, opts ...grpc.CallOption) (*PolicyInDSListRes, error)
 	RetrieveDataset(ctx context.Context, in *DatasetByIDReq, opts ...grpc.CallOption) (*DatasetRes, error)
 	RetrieveDatasetsByGroups(ctx context.Context, in *DatasetsByGroupsReq, opts ...grpc.CallOption) (*DatasetsRes, error)
-	RetrieveDatasetsByPolicy(ctx context.Context, in *DatasetsByPolicyReq, opts ...grpc.CallOption) (*DatasetsRes, error)
+	RetrieveDatasetsByPolicyName(ctx context.Context, in *DatasetsByPolicyReq, opts ...grpc.CallOption) (*DatasetsRes, error)
 }
 
 type policyServiceClient struct {
@@ -69,9 +69,9 @@ func (c *policyServiceClient) RetrieveDatasetsByGroups(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *policyServiceClient) RetrieveDatasetsByPolicy(ctx context.Context, in *DatasetsByPolicyReq, opts ...grpc.CallOption) (*DatasetsRes, error) {
+func (c *policyServiceClient) RetrieveDatasetsByPolicyName(ctx context.Context, in *DatasetsByPolicyReq, opts ...grpc.CallOption) (*DatasetsRes, error) {
 	out := new(DatasetsRes)
-	err := c.cc.Invoke(ctx, "/policies.PolicyService/RetrieveDatasetsByPolicy", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/policies.PolicyService/RetrieveDatasetsByPolicyName", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ type PolicyServiceServer interface {
 	RetrievePoliciesByGroups(context.Context, *PoliciesByGroupsReq) (*PolicyInDSListRes, error)
 	RetrieveDataset(context.Context, *DatasetByIDReq) (*DatasetRes, error)
 	RetrieveDatasetsByGroups(context.Context, *DatasetsByGroupsReq) (*DatasetsRes, error)
-	RetrieveDatasetsByPolicy(context.Context, *DatasetsByPolicyReq) (*DatasetsRes, error)
+	RetrieveDatasetsByPolicyName(context.Context, *DatasetsByPolicyReq) (*DatasetsRes, error)
 	mustEmbedUnimplementedPolicyServiceServer()
 }
 
@@ -106,8 +106,8 @@ func (UnimplementedPolicyServiceServer) RetrieveDataset(context.Context, *Datase
 func (UnimplementedPolicyServiceServer) RetrieveDatasetsByGroups(context.Context, *DatasetsByGroupsReq) (*DatasetsRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RetrieveDatasetsByGroups not implemented")
 }
-func (UnimplementedPolicyServiceServer) RetrieveDatasetsByPolicy(context.Context, *DatasetsByPolicyReq) (*DatasetsRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RetrieveDatasetsByPolicy not implemented")
+func (UnimplementedPolicyServiceServer) RetrieveDatasetsByPolicyName(context.Context, *DatasetsByPolicyReq) (*DatasetsRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RetrieveDatasetsByPolicyName not implemented")
 }
 func (UnimplementedPolicyServiceServer) mustEmbedUnimplementedPolicyServiceServer() {}
 
@@ -194,20 +194,20 @@ func _PolicyService_RetrieveDatasetsByGroups_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PolicyService_RetrieveDatasetsByPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _PolicyService_RetrieveDatasetsByPolicyName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DatasetsByPolicyReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PolicyServiceServer).RetrieveDatasetsByPolicy(ctx, in)
+		return srv.(PolicyServiceServer).RetrieveDatasetsByPolicyName(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/policies.PolicyService/RetrieveDatasetsByPolicy",
+		FullMethod: "/policies.PolicyService/RetrieveDatasetsByPolicyName",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicyServiceServer).RetrieveDatasetsByPolicy(ctx, req.(*DatasetsByPolicyReq))
+		return srv.(PolicyServiceServer).RetrieveDatasetsByPolicyName(ctx, req.(*DatasetsByPolicyReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -236,8 +236,8 @@ var PolicyService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PolicyService_RetrieveDatasetsByGroups_Handler,
 		},
 		{
-			MethodName: "RetrieveDatasetsByPolicy",
-			Handler:    _PolicyService_RetrieveDatasetsByPolicy_Handler,
+			MethodName: "RetrieveDatasetsByPolicyName",
+			Handler:    _PolicyService_RetrieveDatasetsByPolicyName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

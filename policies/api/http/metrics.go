@@ -22,6 +22,23 @@ type metricsMiddleware struct {
 	svc     policies.Service
 }
 
+func (m metricsMiddleware) ListDatasetsByPolicyName(ctx context.Context, policyName string, ownerID string) ([]policies.Dataset, error) {
+	defer func(begin time.Time) {
+		labels := []string{
+			"method", "listDatasetsByPolicyName",
+			"owner_id", ownerID,
+			"policy_id", "",
+			"dataset_id", "",
+		}
+
+		m.counter.With(labels...).Add(1)
+		m.latency.With(labels...).Observe(float64(time.Since(begin).Microseconds()))
+
+	}(time.Now())
+
+	return m.svc.ListDatasetsByPolicyName(ctx, policyName, ownerID)
+}
+
 func (m metricsMiddleware) ListDatasetsByGroupIDInternal(ctx context.Context, groupIDs []string, ownerID string) ([]policies.Dataset, error) {
 	defer func(begin time.Time) {
 		labels := []string{
